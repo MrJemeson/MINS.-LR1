@@ -16,7 +16,7 @@ public class InputServiceImpl implements InputService {
         String string;
         while(true) {
             if(scanner.hasNext()){
-                string = scanner.nextLine();
+                string = scanner.next();
                 break;
             }
         }

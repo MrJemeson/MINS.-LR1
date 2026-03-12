@@ -2,11 +2,13 @@ package service.impl;
 
 import exception.NoSuchBookException;
 import object.Book;
+import object.Order;
 import repository.BookRepository;
 import service.BookService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 public class BookServiceImpl implements BookService {
@@ -18,12 +20,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> getOpenBooksByNameOrAuthor(String searchString) {
-        List<Book> booksByName = bookRepository.findByName(searchString).orElse(List.of());
-        List<Book> booksByAuthor = bookRepository.findByAuthor(searchString).orElse(List.of());
-        booksByName.addAll(booksByAuthor);
-        List<Book> totalOpenBooks = booksByName.stream().filter(x -> !x.isTakenStatus()).toList();
+        List<Book> booksByName = bookRepository.findByName(searchString.toLowerCase()).orElse(List.of());
+        List<Book> booksByAuthor = bookRepository.findByAuthor(searchString.toLowerCase()).orElse(List.of());
+        ArrayList<Book> totalBooks = new ArrayList<>(booksByName);
+        totalBooks.addAll(booksByAuthor);
+        List<Book> totalOpenBooks = totalBooks.stream().filter(x -> !x.isTakenStatus()).toList();
         if (totalOpenBooks.isEmpty()){
-            throw new NoSuchBookException("No book for search key '" + searchString + "' found");
+            throw new NoSuchBookException("No available book for search key '" + searchString + "' found");
         }
         return totalOpenBooks;
     }

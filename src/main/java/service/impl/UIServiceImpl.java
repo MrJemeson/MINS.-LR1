@@ -31,16 +31,20 @@ public class UIServiceImpl implements UIService {
         int intInput;
         while(true) {
             outputService.displayMainMenu();
+
             intInput = inputService.inputNumber();
             switch(intInput){
                 case 1: {
                     createOrder();
+                    break;
                 }
                 case 2: {
                     closeOrder();
+                    break;
                 }
                 case 3: {
                     reportOpenOrders();
+                    break;
                 }
             }
         }
@@ -49,16 +53,9 @@ public class UIServiceImpl implements UIService {
     private User findingUser(){
         String userName;
         User user;
-        while (true) {
-            outputService.displayUserNameInputMessage();
-            userName = inputService.inputString();
-            try {
-                user = userService.getUserByName(userName);
-                break;
-            } catch (NoSuchUserException e) {
-                outputService.displayExceptionMessage(e.getMessage());
-            }
-        }
+        outputService.displayUserNameInputMessage();
+        userName = inputService.inputString();
+        user = userService.getUserByName(userName);
         return user;
     }
 
@@ -67,16 +64,9 @@ public class UIServiceImpl implements UIService {
         List<Book> openBooks;
         int bookNum;
         Book book;
-        while (true) {
-            outputService.displayBookSearchInputMessage();
-            searchString = inputService.inputString();
-            try {
-                openBooks = bookService.getOpenBooksByNameOrAuthor(searchString);
-                break;
-            } catch (NoSuchBookException e) {
-                outputService.displayExceptionMessage(e.getMessage());
-            }
-        }
+        outputService.displayBookSearchInputMessage();
+        searchString = inputService.inputString();
+        openBooks = bookService.getOpenBooksByNameOrAuthor(searchString);
         outputService.displayList(openBooks);
         while(true){
             outputService.displayPositionNumber();
@@ -94,7 +84,7 @@ public class UIServiceImpl implements UIService {
         int orderNum;
         Order order;
         try {
-            orders = orderService.getAllOrdersByUserName(user.getUserName());
+            orders = orderService.getAllOrdersByUserId(user.getId());
         } catch (NoOrdersOnUserException e) {
             outputService.displayExceptionMessage(e.getMessage());
             return Optional.empty();
@@ -113,14 +103,32 @@ public class UIServiceImpl implements UIService {
     }
 
     private void createOrder() {
-        User user = findingUser();
-        Book book = findingBook();
+        User user;
+        try{
+            user = findingUser();
+        } catch (NoSuchUserException e) {
+            outputService.displayExceptionMessage(e.getMessage());
+            return;
+        }
+        Book book;
+        try {
+            book = findingBook();
+        } catch (NoSuchBookException e) {
+            outputService.displayExceptionMessage(e.getMessage());
+            return;
+        }
         orderService.createOrder(user.getId(), book.getId());
         bookService.takeBook(book.getId());
     }
 
     private void closeOrder() {
-        User user = findingUser();
+        User user;
+        try {
+            user = findingUser();
+        } catch (NoSuchUserException e) {
+            outputService.displayExceptionMessage(e.getMessage());
+            return;
+        }
         Optional<Order> order = choosingOrderForUser(user);
         if (order.isEmpty()) {
             return;
@@ -137,11 +145,11 @@ public class UIServiceImpl implements UIService {
             outputService.displayExceptionMessage(e.getMessage());
             return;
         }
-        for (int i = 0; i < orders.size(); i++) {
-            Book book = bookService.getById(orders.get(i).getBookId());
-            orders.get(i).setBookName(book.getBookName());
-            orders.get(i).setBookAuthor(book.getAuthorName());
-            orders.get(i).setUserName(userService.getUserById(orders.get(i).getUserId()).getUserName());
+        for (Order order : orders) {
+            Book book = bookService.getById(order.getBookId());
+            order.setBookName(book.getBookName());
+            order.setBookAuthor(book.getAuthorName());
+            order.setUserName(userService.getUserById(order.getUserId()).getUserName());
         }
         outputService.displayList(orders);
     }

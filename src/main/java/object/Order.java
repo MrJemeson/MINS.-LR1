@@ -15,6 +15,13 @@ public class Order {
         this.userId = userId;
     }
 
+    public Order(int id, int bookId, int userId, boolean closedStatus) {
+        this.id = id;
+        this.bookId = bookId;
+        this.userId = userId;
+        this.closedStatus = closedStatus;
+    }
+
     public int getId() {
         return id;
     }

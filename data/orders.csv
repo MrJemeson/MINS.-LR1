@@ -1,0 +1,5 @@
+"ID","UserId","BookId","ClosedStatus"
+0,1,1,true
+1,1,1,true
+2,1,1,true
+3,1,1,false

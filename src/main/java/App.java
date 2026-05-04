@@ -1,9 +1,8 @@
 import repository.BookRepository;
 import repository.OrderRepository;
 import repository.UserRepository;
-import repository.impl.CsvBookRepositoryImpl;
-import repository.impl.CsvUserRepositoryImpl;
-import repository.impl.CsvOrderRepositoryImpl;
+import repository.factory.CsvRepositoryFactory;
+import repository.factory.RepositoryFactory;
 import service.*;
 import service.impl.*;
 
@@ -14,9 +13,13 @@ import storage.NioFileStorage;
 public class App {
     public static void main(String[] args) {
         FileStorage storage = new NioFileStorage();
-        UserRepository userRepository = new CsvUserRepositoryImpl(Path.of("data/users.csv"), storage);
-        BookRepository bookRepository = new CsvBookRepositoryImpl(Path.of("data/books.csv"), storage);
-        OrderRepository orderRepository = new CsvOrderRepositoryImpl(Path.of("data/orders.csv"), storage);
+        RepositoryFactory repositoryFactory = new CsvRepositoryFactory(storage);
+        Path usersPath = Path.of("data/users.csv");
+        Path booksPath = Path.of("data/books.csv");
+        Path ordersPath = Path.of("data/orders.csv");
+        UserRepository userRepository = repositoryFactory.createUserRepository(usersPath);
+        BookRepository bookRepository = repositoryFactory.createBookRepository(booksPath);
+        OrderRepository orderRepository = repositoryFactory.createOrderRepository(ordersPath);
         InputService inputService = new InputServiceImpl();
         OutputService outputService = new OutputServiceImpl();
         UserService userService = new UserServiceImpl(userRepository);

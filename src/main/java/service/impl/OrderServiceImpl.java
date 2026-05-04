@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
         if(orders.isEmpty()) {
             throw new NoOrdersOnUserException("No orders for User " + userId + " found");
         }
-        return orderRepository.findByUserId(userId).orElseThrow(() -> new NoOrdersOnUserException("No orders for User " + userId + " found"));
+        return orders;
     }
 
     @Override

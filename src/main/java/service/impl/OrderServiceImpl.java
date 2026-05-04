@@ -2,9 +2,7 @@ package service.impl;
 
 import exception.NoOrdersOnUserException;
 import object.Order;
-import repository.BookRepository;
 import repository.OrderRepository;
-import repository.UserRepository;
 import service.OrderService;
 
 import java.util.List;
@@ -18,7 +16,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void createOrder(int userId, int bookId) {
-        orderRepository.addOrder(new Order(orderRepository.findLastOrderId() + 1, userId, bookId));
+        orderRepository.addOrder(new Order(orderRepository.findLastOrderId() + 1, bookId, userId));
     }
 
     @Override

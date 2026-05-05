@@ -11,7 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class CsvIO {
+public class CsvIO {
     private CsvIO() {}
 
     public static <T> List<T> readAll(Path path, FileStorage storage, CsvMapper<T> mapper) {

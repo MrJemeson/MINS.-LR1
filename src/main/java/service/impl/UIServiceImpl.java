@@ -126,8 +126,11 @@ public class UIServiceImpl implements UIService {
             outputService.displayExceptionMessage(e.getMessage());
             return;
         }
-        orderService.createOrder(user.getId(), book.getId());
-        bookService.takeBook(book.getId());
+        try {
+            orderService.createOrder(user.getId(), book.getId());
+        } catch (RuntimeException e) {
+            outputService.displayExceptionMessage(e.getMessage());
+        }
     }
 
     private void closeOrder() {
@@ -142,8 +145,11 @@ public class UIServiceImpl implements UIService {
         if (order.isEmpty()) {
             return;
         }
-        orderService.closeOrder(order.get().getId());
-        bookService.returnBook(order.get().getBookId());
+        try {
+            orderService.closeOrder(order.get().getId());
+        } catch (RuntimeException e) {
+            outputService.displayExceptionMessage(e.getMessage());
+        }
     }
 
     private void reportOpenOrders(){

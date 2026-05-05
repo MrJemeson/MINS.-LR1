@@ -9,6 +9,8 @@ import service.impl.*;
 import java.nio.file.Path;
 import storage.FileStorage;
 import storage.NioFileStorage;
+import unitofwork.CsvUnitOfWorkFactory;
+import unitofwork.UnitOfWorkFactory;
 
 public class App {
     public static void main(String[] args) {
@@ -23,7 +25,8 @@ public class App {
         InputService inputService = new InputServiceImpl();
         OutputService outputService = new OutputServiceImpl();
         UserService userService = new UserServiceImpl(userRepository);
-        OrderService orderService = new OrderServiceImpl(orderRepository);
+        UnitOfWorkFactory uowFactory = new CsvUnitOfWorkFactory(storage, usersPath, booksPath, ordersPath);
+        OrderService orderService = new OrderServiceImpl(orderRepository, uowFactory);
         BookService bookService = new BookServiceImpl(bookRepository);
         OrderViewService orderViewService = new OrderViewServiceImpl(orderService, userService, bookService);
         UIService uiService = new UIServiceImpl(orderService, userService, bookService, orderViewService, inputService, outputService);

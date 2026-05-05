@@ -46,6 +46,12 @@ public class CsvOrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Optional<Order> findById(int orderId) {
+        List<Order> orders = loadOrders();
+        return orders.stream().filter(x -> x.getId() == orderId).findFirst();
+    }
+
+    @Override
     public void addOrder(Order order) {
         List<Order> orders = loadOrders();
         orders.add(order);
